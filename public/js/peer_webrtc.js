@@ -74,7 +74,7 @@ async function addVideoStream(video, stream) {
 			video.play();
 			videoGrid.append(video);
 		});
-	}, 700);
+	}, 1000);
 }
 async function deleteStream(video, stream) {
 	await setTimeout(() => {
