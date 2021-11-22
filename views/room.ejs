@@ -1,0 +1,154 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+    <script>
+        const ROOM_ID = "<%= roomId %>";
+    </script>
+</head>
+
+<body>
+    <main class="d-flex flex-column home-wrap">
+        <div class="g-top text-light">
+            <div class="top-remote-video-show-wrap top-remote-video-show-center d-flex">
+                <div id="meetingContainer" class="">
+                    <div class="call-wrap" style="background-color:#232323;">
+                        <div id="video-grid" class="display-center">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="g-top-left chat-box bg-light text-secondary justify-content-between h-100">
+                    <div class="meeting-heading-wrap d-flex justify-content-between align-items-center ml-3 mr-3 pr-3 pl-3 mb-3"
+                        style="height:7vh">
+                        <div class="meeting-heading font-weight-bold">Meeting Details</div>
+                        <div class="meeting-heading-cross display-center cursor-pointer">
+                            <span class="material-icons">clear</span>
+                        </div>
+                    </div>
+                    <div class="people-chat-wrap d-flex justify-content-between align-items-center ml-3 mr-3 pr-3 pl-3"
+                        style="height:7vh">
+                        <div class="people-heading display-center cursor-pointer">
+                            <div class="people-headin-icon mr-1">
+                                <span class="material-icons">people</span>
+                            </div>
+                            <div class="people-headin-text">
+                                Participant<span class="participant-count"></span>
+                            </div>
+                        </div>
+                        <div class="chat-heading d-flex justify-content-round cursor-pointer">
+                            <div class="chat-heading d-flex display-center cursor-pointer">
+                                <div class="chat-heading-icon">
+                                    <span class="material-icons">message</span>
+                                </div>
+                                <div class="chat-heading-text">
+                                    Chat
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="in-call-chat-wrap mr-3 ml-3 pl-3 pr-3"
+                        style="font-size:14px; height: 69vh; overflow-y: scroll;">
+                        <div class="in-call-wrap-up" style="display:none !important;">
+
+                        </div>
+                        <div class="chat-show-wrap text-secondary d-flex flex-column justify-content-between h-100"
+                            style="font-size:14px;">
+                            <div class="chat-message-show" id="messages"></div>
+                            <div class="chat-message-sent d-flex justify-content-between align-items-center"
+                                style="margin-bottom:20px;">
+                                <div class="chat-message-sent-input" style="width:85%">
+                                    <input type="text" class="chat-message-input-field w-100" id="msgbox"
+                                        placeholder="Send a message to everyone"
+                                        style="border-bottom:1px solid teal; border: none;">
+                                </div>
+                                <div class="chat-message-sent-action display-center" id="btnsend"
+                                    style="color:teal; cursor: pointer;">
+                                    <span class="material-icons">send</span></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="alert">
+            Nguyen Tuan Anh đã tham gia cuộc trò chuyện
+        </div>
+        <div class="g-bottom bg-light m-0 d-flex justify-content-between align-items-center">
+            <div class="bottom-left d-flex" style="height:10vh;">
+                <div class="display-center cursor-pointer meeting-details-button">
+                    Meeting Details<span class="material-icons">keyboard_arrow_down</span>
+                </div>
+            </div>
+            <div class="bottom-middle  d-flex justify-content-center align-items-center" style="height:10vh">
+                <div class="mic-toggle-wrap action-icon-style display-center mr-2 cursor-pointer" id="miceMuteUnmute">
+                    <span class="material-icons">mic</span>
+                </div>
+                <div class="end-call-wrap action-icon-style display-center mr-2 cursor-pointer" id="turnOffCall">
+                    <a href="#" onclick=" close_window();return false"><span
+                            class="material-icons text-danger">call</span></a>
+
+                </div>
+                <div class="video-toggle-wrap action-icon-style display-center cursor-pointer" id="stopVideo">
+                    <span class="material-icons">videocam</span>
+                </div>
+            </div>
+            <!-- <div class="bottom-right chat-title bg-light text-secondary align-items-center w-25 d-flex  pl-2 pr-2">
+                <div class="top-left-participant-icon pt-2 cursor-pointer">
+                    <span class="material-icons">people</span>
+                    <div class="top-left-paricipant-count"></div>
+                </div>
+                <div class="top-left-chat-wrap cursor-pointer display-center">
+                    <span class="material-icons">chat</span>
+                </div>
+            </div> -->
+            <div class="bottom-right d-flex justify-content-center align-items-center" style="height:10vh">
+                <div class="top-left-chat-wrap chat-title option-wrap cursor-pointer display-center mr-4 ml-4"
+                    style="position: relative;">
+                    <div class="option-icon display-center ">
+                        <span class="material-icons">chat</span>
+                    </div>
+                </div>
+                <div class="present-now-wrap display-center align-items-center cursor-pointer mr-4 ml-4"
+                    id="inviteButton">
+                    <span class="material-icons">share</span>
+                </div>
+            </div>
+
+        </div>
+        <Script>
+            function close_window() {
+                setTimeout(() => {
+                    var ww = window.open("/", '_self');
+                    ww.close();
+                }, 1000);
+            }
+        </Script>
+        <script src="/js/script.js"></script>
+        <script src="/js/peer_webrtc.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+        </script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+        </script>
+    </main>
+</body>
+
+</html>
