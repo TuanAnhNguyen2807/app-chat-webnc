@@ -26,29 +26,22 @@ navigator.mediaDevices
 		myPeer.on("call", (call) => {
 			call.answer(stream);
 			const video = document.createElement("video");
-			call.on("stream", (userVideoStream) => {
-				setTimeout(() => {
-					addVideoStream(
-						video,
-						userVideoStream,
-						call.metadata.userName
-					);
-				}, 1500);
-				socket.on("user-disconnected", (userId, userName) => {
-					setTimeout(() => {
-						deleteStream(video, userVideoStream);
-					}, 1000);
+			call.on("stream", async (userVideoStream) => {
+				socket.on("user-disconnected", async (userId, userName) => {
+					await deleteStream(video, userVideoStream);
 					alert_room(
 						`${titleCase(userName)} đã rời khỏi cuộc trò chuyện`
 					);
 				});
+				await addVideoStream(
+					video,
+					userVideoStream,
+					call.metadata.userName
+				);
 			});
 		});
-		socket.on("user-connected", (userId, userName) => {
-			setTimeout(() => {
-				connectToNewUser(userId, stream, userName);
-			}, 1500);
-			alert_room(`${titleCase(userName)} đã tham gia cuộc trò chuyện`);
+		socket.on("user-connected", async (userId, userName) => {
+			await connectToNewUser(userId, stream, userName);
 		});
 	});
 
@@ -64,44 +57,55 @@ myPeer.on("open", (id) => {
 });
 
 function connectToNewUser(userId, stream, userName) {
-	const call = myPeer.call(userId, stream, {
-		metadata: { userName: user },
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			const call = myPeer.call(userId, stream, {
+				metadata: { userName: user },
+			});
+			const video = document.createElement("video");
+			call.on("stream", async (userVideoStream) => {
+				await addVideoStream(video, userVideoStream, userName);
+			});
+			call.on("close", () => {
+				video.remove();
+			});
+			peers[userId] = call;
+			alert_room(`${titleCase(userName)} đã tham gia cuộc trò chuyện`);
+		}, 200);
 	});
-	const video = document.createElement("video");
-	call.on("stream", (userVideoStream) => {
-		addVideoStream(video, userVideoStream, userName);
-	});
-	call.on("close", () => {
-		video.remove();
-	});
-	peers[userId] = call;
 }
 
 function addVideoStream(video, stream, userName) {
-	video.srcObject = stream;
-	video.addEventListener("loadedmetadata", () => {
-		video.play();
-		let divVideoContainer = document.createElement("div");
-		divVideoContainer.classList.add("video-container");
-		divName = document.createElement("div");
-		divName.classList.add("overlay");
-		divName.innerHTML = `<span class="Material-icons">person</span>${titleCase(
-			userName
-		)}`;
-		divVideoContainer.append(divName);
-		divVideoContainer.append(video);
-		videoGrid.append(divVideoContainer);
+	return new Promise((resolve, reject) => {
+		setTimeout(() => {
+			video.srcObject = stream;
+			video.addEventListener("loadedmetadata", () => {
+				video.play();
+				let divVideoContainer = document.createElement("div");
+				divVideoContainer.classList.add("video-container");
+				divName = document.createElement("div");
+				divName.classList.add("overlay");
+				divName.innerHTML = `<span class="Material-icons">person</span>${titleCase(
+					userName
+				)}`;
+				divVideoContainer.append(divName);
+				divVideoContainer.append(video);
+				videoGrid.append(divVideoContainer);
+			});
+		}, 200);
 	});
 }
-function deleteStream(video, stream) {
-	video.srcObject = stream;
-	let video_container = document.querySelectorAll(".video-container");
-	let video_container_list = [...video_container];
-	for (var i = 0, len = video_container_list.length; i < len; i++) {
-		if (video_container[i].querySelector("video") === video) {
-			video_container[i].remove();
+async function deleteStream(video, stream) {
+	setTimeout(() => {
+		video.srcObject = stream;
+		let video_container = document.querySelectorAll(".video-container");
+		let video_container_list = [...video_container];
+		for (var i = 0, len = video_container_list.length; i < len; i++) {
+			if (video_container[i].querySelector("video") === video) {
+				video_container[i].remove();
+			}
 		}
-	}
+	}, 500);
 }
 function alert_room(msg) {
 	let alertJoin = document.querySelector(".alert");
@@ -109,7 +113,7 @@ function alert_room(msg) {
 	alertJoin.style.visibility = "visible";
 	setTimeout(() => {
 		alertJoin.style.visibility = "hidden";
-	}, 1500);
+	}, 2500);
 }
 function titleCase(str) {
 	var splitStr = str.toLowerCase().split(" ");

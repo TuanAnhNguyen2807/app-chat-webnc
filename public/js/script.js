@@ -5,7 +5,6 @@ $(document).ready(function () {
 	});
 	$(".join-action").on("click", function () {
 		var join_value = $(".enter-code").val();
-		console.log(join_value);
 		var meetingUrl = window.location.origin + "/" + join_value;
 		window.location.replace(meetingUrl);
 	});

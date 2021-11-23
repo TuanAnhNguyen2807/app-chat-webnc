@@ -3,6 +3,7 @@ const app = express();
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const { v4: uuidv4 } = require("uuid");
+
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
@@ -15,7 +16,15 @@ app.get("/room", (req, res) => {
 });
 
 app.get("/:roomId", (req, res) => {
-	res.render("room", {
+	let clients = io.sockets.adapter.rooms;
+	clients.forEach((element, index) => {
+		if (index === req.params.roomId) {
+			if (element.size > 5) {
+				return res.render("limit_err");
+			}
+		}
+	});
+	return res.render("room", {
 		roomId: req.params.roomId,
 	});
 });
