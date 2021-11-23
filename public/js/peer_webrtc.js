@@ -78,7 +78,9 @@ async function addVideoStream(video, stream, userName) {
 			divVideoContainer.classList.add("video-container");
 			divName = document.createElement("div");
 			divName.classList.add("overlay");
-			divName.innerHTML = `<span class="Material-icons">person</span>${userName}`;
+			divName.innerHTML = `<span class="Material-icons">person</span>${titleCase(
+				userName
+			)}`;
 			divVideoContainer.append(divName);
 			divVideoContainer.append(video);
 			videoGrid.append(divVideoContainer);
