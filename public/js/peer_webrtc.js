@@ -27,9 +27,17 @@ navigator.mediaDevices
 			call.answer(stream);
 			const video = document.createElement("video");
 			call.on("stream", (userVideoStream) => {
-				addVideoStream(video, userVideoStream, call.metadata.userName);
+				setTimeout(() => {
+					addVideoStream(
+						video,
+						userVideoStream,
+						call.metadata.userName
+					);
+				}, 1500);
 				socket.on("user-disconnected", (userId, userName) => {
-					deleteStream(video, userVideoStream);
+					setTimeout(() => {
+						deleteStream(video, userVideoStream);
+					}, 1500);
 					alert_room(
 						`${titleCase(userName)} đã rời khỏi cuộc trò chuyện`
 					);
@@ -37,7 +45,9 @@ navigator.mediaDevices
 			});
 		});
 		socket.on("user-connected", (userId, userName) => {
-			connectToNewUser(userId, stream, userName);
+			setTimeout(() => {
+				connectToNewUser(userId, stream, userName);
+			}, 1000);
 			alert_room(`${titleCase(userName)} đã tham gia cuộc trò chuyện`);
 		});
 	});
@@ -46,13 +56,13 @@ socket.on("user-disconnected", (userId, userName) => {
 	if (peers[userId]) {
 		setTimeout(() => {
 			peers[userId].close();
-		}, 200);
+		}, 300);
 	}
 	alert_room(`${titleCase(userName)} đã rời khỏi cuộc trò chuyện`);
 });
 
-myPeer.on("open", async (id) => {
-	await socket.emit("join-room", ROOM_ID, id, user);
+myPeer.on("open", (id) => {
+	socket.emit("join-room", ROOM_ID, id, user);
 });
 
 function connectToNewUser(userId, stream, userName) {
@@ -69,35 +79,31 @@ function connectToNewUser(userId, stream, userName) {
 	peers[userId] = call;
 }
 
-async function addVideoStream(video, stream, userName) {
-	await setTimeout(() => {
-		video.srcObject = stream;
-		video.addEventListener("loadedmetadata", () => {
-			video.play();
-			let divVideoContainer = document.createElement("div");
-			divVideoContainer.classList.add("video-container");
-			divName = document.createElement("div");
-			divName.classList.add("overlay");
-			divName.innerHTML = `<span class="Material-icons">person</span>${titleCase(
-				userName
-			)}`;
-			divVideoContainer.append(divName);
-			divVideoContainer.append(video);
-			videoGrid.append(divVideoContainer);
-		});
-	}, 500);
+function addVideoStream(video, stream, userName) {
+	video.srcObject = stream;
+	video.addEventListener("loadedmetadata", () => {
+		video.play();
+		let divVideoContainer = document.createElement("div");
+		divVideoContainer.classList.add("video-container");
+		divName = document.createElement("div");
+		divName.classList.add("overlay");
+		divName.innerHTML = `<span class="Material-icons">person</span>${titleCase(
+			userName
+		)}`;
+		divVideoContainer.append(divName);
+		divVideoContainer.append(video);
+		videoGrid.append(divVideoContainer);
+	});
 }
-async function deleteStream(video, stream) {
-	await setTimeout(() => {
-		video.srcObject = stream;
-		let video_container = document.querySelectorAll(".video-container");
-		let video_container_list = [...video_container];
-		for (var i = 0, len = video_container_list.length; i < len; i++) {
-			if (video_container[i].querySelector("video") === video) {
-				video_container[i].remove();
-			}
+function deleteStream(video, stream) {
+	video.srcObject = stream;
+	let video_container = document.querySelectorAll(".video-container");
+	let video_container_list = [...video_container];
+	for (var i = 0, len = video_container_list.length; i < len; i++) {
+		if (video_container[i].querySelector("video") === video) {
+			video_container[i].remove();
 		}
-	}, 500);
+	}
 }
 function alert_room(msg) {
 	let alertJoin = document.querySelector(".alert");
@@ -179,9 +185,9 @@ socket.on("createMessage", (message, userName) => {
 	messages.innerHTML =
 		messages.innerHTML +
 		`<div class="message">
-					  <b><i class="far fa-user-circle"></i> <span> ${
+					  <b><i class="far fa-user-circle"></i> <span> ${titleCase(
 							userName === user ? "Me" : userName
-						}</span></b>
+						)}</span></b>
 					  <span>: ${message}</span>
 				  </div>`;
 });

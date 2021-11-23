@@ -34,7 +34,8 @@ $(document).ready(function () {
 	$("body").on("DOMSubtreeModified", ".video-container", function () {
 		$(".video-container").each(function (i, obj) {
 			if ($(obj).find("video").length === 0) {
-				$(obj).find(".overlay").html("");
+				// $(obj).find(".overlay").html("");
+				$(obj).remove();
 			}
 		});
 	});

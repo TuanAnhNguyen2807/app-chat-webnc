@@ -152,8 +152,9 @@ input:focus {
     display: flex;
     flex-wrap: wrap;
     background-color: #232323;
-    padding: 10px;
+    align-content: center;
     height: 600px;
+    gap: 10px 10px;
 }
 
 /* #video-grid>video {
@@ -175,7 +176,7 @@ input:focus {
     bottom: 5;
     left: 10;
     font-size: 17px;
-    font-weight: bold;
+    font-weight: 600;
     z-index: 2;
 }
 
@@ -185,7 +186,7 @@ input:focus {
 
 .video-container video {
     position: relative;
-    width: 270px;
+    width: 250px;
     border-radius: 10px;
     margin: 5px;
     object-fit: cover;
@@ -202,27 +203,61 @@ input:focus {
     visibility: hidden;
 }
 
+@media (max-width: 900px) {
+    #meetingContainer {
+        width: 60% !important;
+    }
 
+    .video-container video {
+        position: relative;
+        width: 230px;
+    }
 
-@media (max-width: 500px) {
+    .g-top-left {
+        width: 40% !important;
+        z-index: 1000;
+    }
+}
+
+@media (max-width: 780px) {
     #meetingContainer {
         width: 100% !important;
     }
 
-    #video-grid {
-        display: flex;
-        flex-wrap: wrap;
-        height: 600px;
-        /* gap: 10px; */
-    }
-
-    #video-grid>video {
-        width: 30%;
-        margin: 5px;
+    .video-container video {
+        position: relative;
+        width: 210px;
     }
 
     .g-top-left {
+        width: 50% !important;
+        z-index: 1000;
+    }
+}
+
+
+@media (max-width: 600px) {
+    #meetingContainer {
         width: 100% !important;
+    }
+
+    .overlay {
+        font-size: 16px;
+    }
+
+    .overlay span {
+        font-size: 20px;
+    }
+
+    .video-container video {
+        position: relative;
+        width: 190px;
+    }
+
+
+    .g-top-left {
+        width: 100% !important;
+        z-index: 1000;
     }
 
 
