@@ -37,7 +37,7 @@ navigator.mediaDevices
 				socket.on("user-disconnected", (userId, userName) => {
 					setTimeout(() => {
 						deleteStream(video, userVideoStream);
-					}, 700);
+					}, 1000);
 					alert_room(
 						`${titleCase(userName)} đã rời khỏi cuộc trò chuyện`
 					);
@@ -54,9 +54,7 @@ navigator.mediaDevices
 
 socket.on("user-disconnected", (userId, userName) => {
 	if (peers[userId]) {
-		setTimeout(() => {
-			peers[userId].close();
-		}, 700);
+		peers[userId].close();
 	}
 	alert_room(`${titleCase(userName)} đã rời khỏi cuộc trò chuyện`);
 });
