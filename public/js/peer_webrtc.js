@@ -56,7 +56,7 @@ socket.on("user-disconnected", (userId, userName) => {
 	if (peers[userId]) {
 		setTimeout(() => {
 			peers[userId].close();
-		}, 300);
+		}, 700);
 	}
 	alert_room(`${titleCase(userName)} đã rời khỏi cuộc trò chuyện`);
 });
