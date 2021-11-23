@@ -22,12 +22,12 @@ navigator.mediaDevices
 	})
 	.then((stream) => {
 		myVideoStream = stream;
-		addVideoStream(myVideo, stream);
+		addVideoStream(myVideo, stream, user);
 		myPeer.on("call", (call) => {
 			call.answer(stream);
 			const video = document.createElement("video");
 			call.on("stream", (userVideoStream) => {
-				addVideoStream(video, userVideoStream);
+				addVideoStream(video, userVideoStream, call.metadata.userName);
 				socket.on("user-disconnected", (userId, userName) => {
 					deleteStream(video, userVideoStream);
 					alert_room(
@@ -37,7 +37,7 @@ navigator.mediaDevices
 			});
 		});
 		socket.on("user-connected", (userId, userName) => {
-			connectToNewUser(userId, stream);
+			connectToNewUser(userId, stream, userName);
 			alert_room(`${titleCase(userName)} đã tham gia cuộc trò chuyện`);
 		});
 	});
@@ -55,11 +55,13 @@ myPeer.on("open", async (id) => {
 	await socket.emit("join-room", ROOM_ID, id, user);
 });
 
-function connectToNewUser(userId, stream) {
-	const call = myPeer.call(userId, stream);
+function connectToNewUser(userId, stream, userName) {
+	const call = myPeer.call(userId, stream, {
+		metadata: { userName: user },
+	});
 	const video = document.createElement("video");
 	call.on("stream", (userVideoStream) => {
-		addVideoStream(video, userVideoStream);
+		addVideoStream(video, userVideoStream, userName);
 	});
 	call.on("close", () => {
 		video.remove();
@@ -67,26 +69,33 @@ function connectToNewUser(userId, stream) {
 	peers[userId] = call;
 }
 
-async function addVideoStream(video, stream) {
+async function addVideoStream(video, stream, userName) {
 	await setTimeout(() => {
 		video.srcObject = stream;
 		video.addEventListener("loadedmetadata", () => {
 			video.play();
-			videoGrid.append(video);
+			let divVideoContainer = document.createElement("div");
+			divVideoContainer.classList.add("video-container");
+			divName = document.createElement("div");
+			divName.classList.add("overlay");
+			divName.innerHTML = `<span class="Material-icons">person</span>${userName}`;
+			divVideoContainer.append(divName);
+			divVideoContainer.append(video);
+			videoGrid.append(divVideoContainer);
 		});
-	}, 1000);
+	}, 500);
 }
 async function deleteStream(video, stream) {
 	await setTimeout(() => {
 		video.srcObject = stream;
-		let video_del = document.querySelectorAll("video");
-		let list_video = [...video_del];
-		for (var i = 0, len = list_video.length; i < len; i++) {
-			if (video_del[i] === video) {
-				video_del[i].remove();
+		let video_container = document.querySelectorAll(".video-container");
+		let video_container_list = [...video_container];
+		for (var i = 0, len = video_container_list.length; i < len; i++) {
+			if (video_container[i].querySelector("video") === video) {
+				video_container[i].remove();
 			}
 		}
-	}, 700);
+	}, 500);
 }
 function alert_room(msg) {
 	let alertJoin = document.querySelector(".alert");
@@ -119,7 +128,7 @@ muteButton.addEventListener("click", () => {
 			html = `<span class="material-icons">mic</span>`;
 			muteButton.innerHTML = html;
 		}
-	}, 500);
+	}, 300);
 });
 
 stopVideo.addEventListener("click", () => {
@@ -134,7 +143,7 @@ stopVideo.addEventListener("click", () => {
 			html = `<span class="material-icons">videocam</span>`;
 			stopVideo.innerHTML = html;
 		}
-	}, 500);
+	}, 300);
 });
 
 inviteButton.addEventListener("click", (e) => {

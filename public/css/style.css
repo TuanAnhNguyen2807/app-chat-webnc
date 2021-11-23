@@ -156,15 +156,15 @@ input:focus {
     height: 600px;
 }
 
-#video-grid>video {
+/* #video-grid>video {
     width: 270px;
     border-radius: 10px;
     margin: 5px;
     object-fit: cover;
     border: 1px solid rgb(216, 181, 181);
-}
+} */
 
-/* .video-container {
+.video-container {
     position: relative;
 }
 
@@ -191,7 +191,7 @@ input:focus {
     object-fit: cover;
     border: 1px solid rgb(216, 181, 181);
     z-index: 1 !important;
-} */
+}
 
 .alert {
     position: absolute;

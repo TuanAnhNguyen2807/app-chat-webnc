@@ -31,11 +31,11 @@ $(document).ready(function () {
 			"top-remote-video-show-center"
 		);
 	});
-	// $("body").on("DOMSubtreeModified", ".video-container", function () {
-	// 	$(".video-container").each(function (i, obj) {
-	// 		if ($(obj).find("video").length === 0) {
-	// 			$(obj).find(".overlay").html("");
-	// 		}
-	// 	});
-	// });
+	$("body").on("DOMSubtreeModified", ".video-container", function () {
+		$(".video-container").each(function (i, obj) {
+			if ($(obj).find("video").length === 0) {
+				$(obj).find(".overlay").html("");
+			}
+		});
+	});
 });
