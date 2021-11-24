@@ -192,5 +192,5 @@ socket.on("createMessage", (message, userName) => {
 						)}</span></b>
 					  <span>: ${message}</span>
 				  </div>`;
-	alert_room(`${userName} đã gửi bạn một tin nhắn`);
+	alert_room(`${userName} đã gửi một tin nhắn`);
 });
