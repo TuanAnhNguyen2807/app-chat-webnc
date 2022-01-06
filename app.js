@@ -15,18 +15,29 @@ app.get("/room", (req, res) => {
 	res.redirect(`/${uuidv4()}`);
 });
 
+app.get("/pagelimit", (req, res) => {
+	res.render("limit_err");
+});
+
 app.get("/:roomId", (req, res) => {
 	let clients = io.sockets.adapter.rooms;
-	clients.forEach((element, index) => {
-		if (index === req.params.roomId) {
-			if (element.size > 5) {
-				return res.render("limit_err");
+	if (clients.size != 0) {
+		clients.forEach((element, index) => {
+			if (index === req.params.roomId) {
+				if (element.size > 5) {
+					return res.redirect("/pagelimit");
+				} else {
+					return res.render("room", {
+						roomId: req.params.roomId,
+					});
+				}
 			}
-		}
-	});
-	return res.render("room", {
-		roomId: req.params.roomId,
-	});
+		});
+	} else {
+		return res.render("room", {
+			roomId: req.params.roomId,
+		});
+	}
 });
 
 io.on("connection", (socket) => {
