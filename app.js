@@ -21,7 +21,7 @@ app.get("/pagelimit", (req, res) => {
 
 app.get("/:roomId", (req, res) => {
 	let clients = io.sockets.adapter.rooms;
-	if (clients.size != 0) {
+	if (clients.size !== 0) {
 		clients.forEach((element, index) => {
 			if (index === req.params.roomId) {
 				if (element.size > 5) {
